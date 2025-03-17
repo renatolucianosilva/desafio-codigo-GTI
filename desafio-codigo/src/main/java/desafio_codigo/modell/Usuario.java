@@ -1,14 +1,23 @@
 package desafio_codigo.modell;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name="usuario")
+@PrimaryKeyJoinColumn(name = "id_usuario")
 public class Usuario extends Pessoa{
 
-    private int id;
+    @Column(name="email")
     private String email;
+
+    @Column(name="senha")
     private String senha;
-    private Perfil idPerfil;
-    private Pessoa pessoaId;
 
-
+    @ManyToOne
+    @JoinColumn(name="id_perfil")
+    private Perfil perfil;
 
 
 }
