@@ -16,6 +16,6 @@ public class AgendamentoVisita {
     private Custodiado custodiadoId;
     private Visitante visitanteId;
     private LocalDateTime dataHoraAgendamento;
-    private Status statusId;
+    private Status statusID;
 
 }

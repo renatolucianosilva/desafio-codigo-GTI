@@ -4,7 +4,7 @@ public class Visitante extends Pessoa{
 
     private int id;
     private String senhaOnline;
-    private int pessoaId;
+    private Pessoa pessoaId;
 
 
 }
