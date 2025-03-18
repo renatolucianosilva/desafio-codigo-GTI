@@ -11,9 +11,11 @@ import java.util.List;
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idStatus;
+    private Long idStatus;
+
     @Column(name="descricao")
     private String descricao;
+
     @OneToMany(mappedBy = "status")
     private List<AgendamentoVisita> agendamentos;
 }

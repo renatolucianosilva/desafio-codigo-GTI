@@ -13,7 +13,7 @@ public class Funcionalidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_funcionalidade")
-    private int idFuncionalidade;
+    private Long idFuncionalidade;
     @Column(name="descricao")
     private String descricao;
     @Column(name="autority")

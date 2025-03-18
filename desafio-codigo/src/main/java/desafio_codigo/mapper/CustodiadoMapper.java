@@ -6,12 +6,16 @@ import desafio_codigo.modell.Custodiado;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CustodiadoMapper {
 
    Custodiado toCustodiado (CustodiadoRequest custodiadoRequest);
 
    CustodiadoResponse toCustodiadoResponse (Custodiado custodiado);
+
+   List<CustodiadoResponse> toCustodiadoResponseList (List<Custodiado> custodiados);
 
 
 }

@@ -25,5 +25,12 @@ public class Custodiado extends Pessoa{
     private List<AgendamentoVisita> agendamentos;
 
 
+    public Custodiado createCustodiado(UnidadePenal unidadePenal) {
+
+        this.unidadePenal = unidadePenal;
+
+        return this;
+    }
+
 
 }

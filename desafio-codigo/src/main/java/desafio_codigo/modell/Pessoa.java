@@ -14,7 +14,7 @@ public abstract class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_pessoa")
-    private int idPessoa;
+    private Long idPessoa;
     @Column(name="nome")
     private String nome;
     @Column(name="CPF")

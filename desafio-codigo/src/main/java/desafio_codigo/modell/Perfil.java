@@ -13,7 +13,7 @@ public class Perfil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_perfil")
-    private int idPerfil;
+    private Long idPerfil;
     @Column(name="descricao")
     private String descrição;
 

@@ -11,7 +11,7 @@ public class VincPerfilFuncionalidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_vinc_perfil_func")
-    private int idVincPerfilFunc;
+    private Long idVincPerfilFunc;
 
     @ManyToOne
     @JoinColumn(name="id_perfil")
