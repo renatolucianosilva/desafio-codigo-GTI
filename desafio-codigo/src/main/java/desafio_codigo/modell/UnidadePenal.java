@@ -13,7 +13,7 @@ public class UnidadePenal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_unidade")
-    private int idUnidade;
+    private Long idUnidade;
 
     @Column(name="nome")
     private String nome;
