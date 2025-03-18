@@ -3,7 +3,6 @@ package desafio_codigo.controller;
 import desafio_codigo.api.request.CustodiadoRequest;
 import desafio_codigo.api.response.CustodiadoResponse;
 import desafio_codigo.mapper.CustodiadoMapper;
-import desafio_codigo.modell.Custodiado;
 import desafio_codigo.service.CustodiadoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -40,7 +39,7 @@ public class CustodiadoController {
     @GetMapping("/{id}")
     public ResponseEntity<CustodiadoResponse> findCustodiadoById(@PathVariable Long id) {
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(Mapper.toCustodiadoResponse(service.findCustodiadoById(id)));
     }
 

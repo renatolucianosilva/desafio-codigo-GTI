@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="usuario")
-@PrimaryKeyJoinColumn(name = "id_usuario")
+@PrimaryKeyJoinColumn(name = "id_pessoa")
 public class Usuario extends Pessoa{
 
     @Column(name="email")
