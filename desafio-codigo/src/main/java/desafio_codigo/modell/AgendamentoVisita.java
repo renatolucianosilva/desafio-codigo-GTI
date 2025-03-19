@@ -1,5 +1,6 @@
 package desafio_codigo.modell;
 
+import desafio_codigo.api.request.AgendamentoVisitaRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -30,5 +31,14 @@ public class AgendamentoVisita {
     @ManyToOne
     @JoinColumn(name="status_id")
     private Status status;
+
+    public AgendamentoVisita novoAgendamentoVisita(Custodiado custodiado, Visitante visitante, Status status ) {
+
+        this.custodiado = custodiado;
+        this.visitante = visitante;
+        this.status = status;
+
+        return this;
+    }
 
 }
