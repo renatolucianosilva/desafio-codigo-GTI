@@ -10,11 +10,13 @@ import java.time.LocalDateTime;
 @Builder
 public class AgendamentoVisitaResponse {
 
-
     private CustodiadoResponse custodiado;
+
     private VisitanteResponse visitante;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dataHoraAgendamento;
+
     private StatusResponse status;
 
 

@@ -10,8 +10,8 @@ public class AgendamentoVisitaRequest {
 
     private Long idCustodiado;
     private Long idVisitante;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dataHoraAgendamento;
-    private Long idStatus;
+
 
 }

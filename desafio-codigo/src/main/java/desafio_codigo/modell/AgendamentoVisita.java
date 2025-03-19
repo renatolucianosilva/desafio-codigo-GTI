@@ -1,6 +1,7 @@
 package desafio_codigo.modell;
 
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
+import desafio_codigo.exceptions.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -39,6 +40,25 @@ public class AgendamentoVisita {
         this.status = status;
 
         return this;
+    }
+
+    public AgendamentoVisita cancelarVisita(Status status) {
+
+        if(this.status.getDescricao().equals(status.getDescricao()))
+            throw new BadRequestException("Agendamento com Status de Cancelado");
+
+
+        this.status = status;
+
+        return this;
+    }
+
+    public AgendamentoVisita validarDataHoraAgendamento(LocalDateTime dataHoraAgendamento) {
+
+        var dataAgendamento = dataHoraAgendamento.toLocalDate();
+        var horaAgendamento = dataHoraAgendamento.toLocalTime();
+
+        return null;
     }
 
 }
