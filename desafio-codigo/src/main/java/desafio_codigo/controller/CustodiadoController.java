@@ -6,6 +6,8 @@ import desafio_codigo.mapper.CustodiadoMapper;
 import desafio_codigo.service.CustodiadoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +27,16 @@ public class CustodiadoController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(Mapper.toCustodiadoResponse(service.saveCustodiado(custodiado)));
+                .body(Mapper.toCustodiadoResponse(service.createCustodiado(custodiado)));
 
     }
 
     @GetMapping
-    public ResponseEntity<List<CustodiadoResponse>> findAllCustodiados(){
+    public ResponseEntity<Page<CustodiadoResponse>> findAllCustodiados(Pageable pageable) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Mapper.toCustodiadoResponseList(service.findAllCustodiados()));
+                .body(service.listarCustodiados(pageable)
+                        .map(Mapper::toCustodiadoResponse));
     }
 
     @GetMapping("/{id}")

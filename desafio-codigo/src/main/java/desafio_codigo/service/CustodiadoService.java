@@ -9,6 +9,8 @@ import desafio_codigo.repository.CustodiadoRepository;
 import desafio_codigo.repository.UnidadePenalRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +25,7 @@ public class CustodiadoService {
     private CustodiadoRepository repository;
     private UnidadePenalService unidadePenalService;
 
-    public Custodiado saveCustodiado(CustodiadoRequest custodiado) {
+    public Custodiado createCustodiado(CustodiadoRequest custodiado) {
 
         var custodiadoToSave = Mapper.toCustodiado(custodiado);
 
@@ -33,9 +35,9 @@ public class CustodiadoService {
 
     }
 
-    public List<Custodiado> findAllCustodiados() {
+    public Page<Custodiado> listarCustodiados(Pageable pageable) {
 
-        return repository.findAll();
+        return repository.findAll(pageable);
 
     }
 

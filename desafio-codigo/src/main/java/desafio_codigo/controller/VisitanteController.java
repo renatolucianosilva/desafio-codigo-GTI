@@ -5,6 +5,8 @@ import desafio_codigo.api.response.VisitanteResponse;
 import desafio_codigo.mapper.VisitanteMapper;
 import desafio_codigo.service.VisitanteService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +31,11 @@ public class VisitanteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VisitanteResponse>> listarVisitantes() {
+    public ResponseEntity<Page<VisitanteResponse>> listarVisitantes(Pageable pageable) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Mapper.toVisitanteResponseList(visitanteService.findAll()));
+                .body(visitanteService.listarVisitantes(pageable)
+                        .map(Mapper::toVisitanteResponse));
     }
 
     @GetMapping("/{id}")

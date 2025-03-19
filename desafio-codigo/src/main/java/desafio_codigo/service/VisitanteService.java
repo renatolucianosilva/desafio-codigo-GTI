@@ -25,9 +25,9 @@ public class VisitanteService {
 
     }
 
-    public List<Visitante> findAll() {
+    public Page<Visitante> listarVisitantes(Pageable pageable) {
 
-        return visitanteRepository.findAll();
+        return visitanteRepository.findAll(pageable);
     }
 
     public Visitante findById(Long id) {

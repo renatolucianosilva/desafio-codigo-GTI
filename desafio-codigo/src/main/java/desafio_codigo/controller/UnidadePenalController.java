@@ -6,6 +6,8 @@ import desafio_codigo.mapper.UnidadePenalMapper;
 import desafio_codigo.service.UnidadePenalService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +31,11 @@ public class UnidadePenalController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UnidadePenalResponse>> listarUnidadesPenais() {
+    public ResponseEntity<Page<UnidadePenalResponse>> listarUnidadesPenais(Pageable pageable) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Mapper.toUnidadePenaResponseList(service.findAllUnidadePenal()));
+                .body(service.listarUnidadesPenais(pageable)
+                        .map(Mapper::toUnidadePenalResponse));
 
     }
 

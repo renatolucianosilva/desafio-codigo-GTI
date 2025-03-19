@@ -4,6 +4,8 @@ package desafio_codigo.service;
 import desafio_codigo.modell.UnidadePenal;
 import desafio_codigo.repository.UnidadePenalRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,10 +24,10 @@ public class UnidadePenalService {
 
     }
 
-    public List<UnidadePenal> findAllUnidadePenal() {
+    public Page<UnidadePenal> listarUnidadesPenais(Pageable pageable) {
 
 
-        return repository.findAll();
+        return repository.findAll(pageable);
     }
 
     public UnidadePenal findUnidadePenalById(Long id) {
