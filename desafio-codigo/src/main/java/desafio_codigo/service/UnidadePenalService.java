@@ -25,14 +25,19 @@ public class UnidadePenalService {
     }
 
     public Page<UnidadePenal> listarUnidadesPenais(Pageable pageable) {
-
-
         return repository.findAll(pageable);
     }
+
 
     public UnidadePenal findUnidadePenalById(Long id) {
         System.out.println("Serviceunidade penal: " + id);
         return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unidade Penal Não Existe"));
+    }
+
+    public UnidadePenal findByDescricao(String descricao) {
+
+        return repository.findByDescricao(descricao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unidade Penal Não Existe"));
     }
 }

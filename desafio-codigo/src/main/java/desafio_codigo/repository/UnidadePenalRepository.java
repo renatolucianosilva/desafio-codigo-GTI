@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UnidadePenalRepository extends JpaRepository<UnidadePenal, Long> {
 
-    List<UnidadePenal> findByDescricao(String descricao) throws BadRequestException;
+    Optional<UnidadePenal> findByDescricao(String descricao) throws BadRequestException;
 }
