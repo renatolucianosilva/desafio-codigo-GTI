@@ -1,6 +1,7 @@
 package desafio_codigo.controller;
 
 import desafio_codigo.service.JwtService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,10 @@ public class AuthenticationController {
 }
 
 class AuthenticationRequest {
+
+    @Schema(example = "admin")
     private String username;
+    @Schema(example = "admin")
     private String password;
 
     public String getUsername() { return username; }
