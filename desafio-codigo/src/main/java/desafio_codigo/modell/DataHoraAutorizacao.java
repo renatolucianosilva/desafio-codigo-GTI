@@ -13,6 +13,5 @@ public class DataHoraAutorizacao {
     private Long idAutorizacao;
 
     @Column(name="data_hora_autorizado")
-
     private LocalDateTime dataHoraAutorizado;
 }
