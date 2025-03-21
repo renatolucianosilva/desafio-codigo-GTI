@@ -130,6 +130,22 @@ REQUISITOS NÃO-FUNCIONAIS
 **Disponibilidade de Data e Hora:**
 
 * Verifica se a data e hora da visita estão dentro dos horários permitidos pela unidade penal.
+   
+**Data e Horarios Autorizados**
+
+- 05/04/2025 08:00
+- 05/04/2025 10:00
+- 05/04/2025 12:00
+- 10/04/2025 08:00
+- 10/04/2025 10:00
+- 10/04/2025 12:00
+- 15/04/2025 08:00
+- 15/04/2025 10:00
+- 15/04/2025 12:00
+- 20/04/2025 08:00
+- 20/04/2025 10:00
+- 20/04/2025 12:00
+
 * Caso a data ou hora não estejam disponíveis, o agendamento é negado.
 
 **Conflito de Agendamento:**
@@ -146,8 +162,8 @@ REQUISITOS NÃO-FUNCIONAIS
 
 ## Clonar o Repositório:
 
-Utilize o comando git clone para copiar o repositório para a sua máquina local.
-Exemplo:
+Utilize o comando git clone para copiar o repositório para a sua máquina local:
+
 
 git clone https://github.com/renatolucianosilva/desafio-codigo-GTI.git
 
@@ -165,7 +181,7 @@ git clone https://github.com/renatolucianosilva/desafio-codigo-GTI.git
 * A URL de conexão é: jdbc:h2:file:./data/databases/desafio_codigo
 * A configuração spring.jpa.hibernate.ddl-auto=update garante que o esquema do banco de dados seja atualizado automaticamente ao iniciar a aplicação, preservando os dados mesmo após reiniciar a aplicação.
 * Use spring.sql.init.mode=always para garantir que seus scripts SQL sejam executados corretamente ao iniciar a aplicação.
-* SCRIP SQL em (main/java/resourses/data.sql)
+* SCRIP SQL em (main/java/resourses/V1__CretateTables)
 * Não é necessário realizar nenhuma configuração adicional para o banco de dados H2.
 
 ### Observações:
