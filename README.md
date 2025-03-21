@@ -178,13 +178,13 @@ git clone https://github.com/renatolucianosilva/desafio-codigo-GTI.git
 
 * O projeto utiliza o banco de dados H2 para persistência de dados.
 * O banco de dados está configurado para armazenar os dados na pasta dados na raiz do projeto.
-* A URL de conexão é: jdbc:h2:file:./data/databases/desafio_codigo
+* A URL de conexão é: jdbc:h2:file:./data/database/desafio_codigo
 * A configuração spring.jpa.hibernate.ddl-auto=update garante que o esquema do banco de dados seja atualizado automaticamente ao iniciar a aplicação, preservando os dados mesmo após reiniciar a aplicação.
+* data/database/desafio_codigo - está junto ao projeto com dados em tabela mas pode ser excluiudo caso haja nescessidade.
 * Migração Flyway para População do Banco de Dados
 * A migração está localizada no diretório `src/main/resources/db/migration`.
 * A migração é executada automaticamente pelo Flyway na inicialização da aplicação.
 * A migração contém instruções SQL para inserir dados em tabelas específicas do banco de dados. Consulte o arquivo da migração para obter mais detalhes.
-
 
 ### Observações:
 
@@ -259,3 +259,13 @@ Esta API utiliza autenticação JWT (JSON Web Tokens) para proteger os endpoints
 ### Geração do Token JWT (POST /auth/login)
 
 Para gerar um token JWT, você precisa fazer uma requisição `POST` para o endpoint `/auth/login`.
+
+## Pré-requisitos
+
+Para executar a aplicação, você precisará ter os seguintes softwares instalados em sua máquina:
+
+* **Java Development Kit (JDK) 17 ou superior**: Certifique-se de que o JDK 17 ou uma versão mais recente esteja instalado e configurado corretamente em seu sistema. 
+* **Maven**: O Maven é usado para gerenciar as dependências do projeto e construir a aplicação.
+
+* **Git**: O Git é necessário para clonar o repositório do projeto. 
+
