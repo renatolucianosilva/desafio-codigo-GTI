@@ -41,9 +41,14 @@ public class AgendamentoVisitaController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
     @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content)
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-    public ResponseEntity<AgendamentoVisitaResponse> agendarNovaVisita(@RequestBody @Valid AgendamentoVisitaRequest agendamento,
-                                                                       @RequestParam String nomeVisitante,
-                                                                       @RequestParam String nomeCustodiado) {
+    public ResponseEntity<AgendamentoVisitaResponse> agendarNovaVisita(
+            @RequestBody @Valid AgendamentoVisitaRequest agendamento,
+            @RequestParam
+            @Schema(name = "Nome Visitante")
+            String nomeVisitante,
+            @RequestParam
+            @Schema(name = "Nome Custodiado")
+            String nomeCustodiado) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Mapper.toAgendamentoVisitaResponse(agendamentoService
@@ -79,7 +84,10 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "200", description = "Lista de Agendamentos por Custodiado",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaCustodiado(@RequestParam(required = true) String custodiado) {
+    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaCustodiado(
+            @RequestParam(required = true)
+            @Schema(name = "Nome Custodiado")
+            String custodiado) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Mapper.toAgedamentoVisitaResponseList(agendamentoService.listAgendamentoCustodiado(custodiado)));
@@ -90,7 +98,10 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "200", description = "Lista de Agendamentos por Visitante",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaVisitante(@RequestParam(required = true) String visitante) {
+    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaVisitante(
+            @RequestParam(required = true)
+            @Schema(name = "Nome Visitante")
+            String visitante) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Mapper.toAgedamentoVisitaResponseList(agendamentoService.listAgendamentoVisitante(visitante)));
@@ -101,7 +112,10 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "200", description = "Lista de Agendamentos por Status",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaStatus(@RequestParam(required = true) String status) {
+    public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaStatus(
+            @RequestParam(required = true)
+            @Schema(name = "Informe o Status", example = "AGENDADO, CANCELADO, SUSPENSO, REALIZADO")
+            String status) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Mapper.toAgedamentoVisitaResponseList(agendamentoService.listAgendamentoStatus(status.toUpperCase())));
