@@ -1,7 +1,7 @@
 package desafio_codigo.controller;
 
 import desafio_codigo.api.request.AgendamentoVisitaAlterarRequest;
-import desafio_codigo.api.request.AgendamentoVisitaCancelarRequest;
+import desafio_codigo.api.request.AgendamentoVisitaAlterarStatusRequest;
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
 import desafio_codigo.api.response.AgendamentoVisitaResponse;
 import desafio_codigo.mapper.AgendamentoVisitaMapper;
@@ -44,10 +44,8 @@ public class AgendamentoVisitaController {
     public ResponseEntity<AgendamentoVisitaResponse> agendarNovaVisita(
             @RequestBody @Valid AgendamentoVisitaRequest agendamento,
             @RequestParam
-            @Schema(name = "Nome Visitante")
             String nomeVisitante,
             @RequestParam
-            @Schema(name = "Nome Custodiado")
             String nomeCustodiado) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -86,7 +84,7 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaCustodiado(
             @RequestParam(required = true)
-            @Schema(name = "Nome Custodiado")
+
             String custodiado) {
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -100,7 +98,7 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaVisitante(
             @RequestParam(required = true)
-            @Schema(name = "Nome Visitante")
+
             String visitante) {
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -114,7 +112,7 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     public ResponseEntity<List<AgendamentoVisitaResponse>> filterAgendamentoVisitaStatus(
             @RequestParam(required = true)
-            @Schema(name = "Informe o Status", example = "AGENDADO, CANCELADO, SUSPENSO, REALIZADO")
+            @Schema(example = "AGENDADO")
             String status) {
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -139,7 +137,7 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "400", description = "Requisição inválida")
     @ApiResponse(responseCode = "404", description = "Agendamento não encontrado")
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-    public ResponseEntity<AgendamentoVisitaResponse> cancelarVisita(@RequestBody @Valid AgendamentoVisitaCancelarRequest cancelamento,
+    public ResponseEntity<AgendamentoVisitaResponse> cancelarVisita(@RequestBody @Valid AgendamentoVisitaAlterarStatusRequest cancelamento,
                                                                     @RequestParam String nomeVisitante,
                                                                     @RequestParam String nomeCustodiado) {
 
@@ -160,7 +158,6 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     public ResponseEntity<AgendamentoVisitaResponse> alterarDataVisita(
             @RequestBody @Valid AgendamentoVisitaAlterarRequest dadosAlteracao,
-            @Schema(name = "CPF Visitante", example = "XXX.XXX.XXX-XX")
             @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", message = "CPF deve estar no formato XXX.XXX.XXX-XX ou XXXXXXXXXXX" )
             @Length(min = 11, max = 14, message = "CPF deve ter entre 11 e 14 caracteres")
             @RequestParam String cpfVisitante,
@@ -172,6 +169,25 @@ public class AgendamentoVisitaController {
                         .toAgendamentoVisitaResponse
                                 (agendamentoService.alterarDataHoraVisita
                                         (dadosAlteracao, cpfVisitante, data, hora)));
+
+    }
+
+    @PutMapping("/efetivaragendamento")
+    @Operation(summary = "Efetivar um agendamento")
+    @ApiResponse(responseCode = "200", description = "Agendamento realizado com sucesso",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Requisição inválida")
+    @ApiResponse(responseCode = "404", description = "Agendamento não encontrado")
+    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    public ResponseEntity<AgendamentoVisitaResponse> realizarVisita(@RequestBody @Valid AgendamentoVisitaAlterarStatusRequest cancelamento,
+                                                                    @RequestParam String nomeVisitante,
+                                                                    @RequestParam String nomeCustodiado) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Mapper
+                        .toAgendamentoVisitaResponse
+                                (agendamentoService.realizarAgendamentoVisita
+                                        (cancelamento, nomeVisitante, nomeCustodiado)));
 
     }
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name="agendamento_visita")
+@Table(name = "agendamento_visita")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,16 +36,24 @@ public class AgendamentoVisita {
     private LocalDateTime dataHoraAgendamento;
 
     @ManyToOne
-    @JoinColumn(name="status_id")
+    @JoinColumn(name = "status_id")
     private Status status;
-
-
 
 
     public AgendamentoVisita cancelarVisita(Status status) {
 
-        if(this.status.getDescricao().equals("CANCELADO"))
+        if (this.status.getDescricao().equals("CANCELADO"))
             throw new BadRequestException("Agendamento com Status de Cancelado");
+        this.status = status;
+
+
+        return this;
+    }
+
+    public AgendamentoVisita realizarVisita(Status status) {
+
+        if (this.status.getIdStatus().equals(2L) || this.status.getIdStatus().equals(3L) || this.status.getIdStatus().equals(4L))
+            throw new BadRequestException("Não é possivel realizar uma visita"+ status);
         this.status = status;
 
 
@@ -56,7 +64,6 @@ public class AgendamentoVisita {
         this.dataHoraAgendamento = dataHoraAgendamento;
         return this;
     }
-
 
 
 }

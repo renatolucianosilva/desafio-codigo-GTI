@@ -1,12 +1,15 @@
 package desafio_codigo.api.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import desafio_codigo.config.FormatarCpf;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+
+import java.io.Serializable;
 
 @Data
 public class AgendamentoVisitaRequest {

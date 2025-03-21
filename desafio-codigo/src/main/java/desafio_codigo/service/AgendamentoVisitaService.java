@@ -1,8 +1,9 @@
 package desafio_codigo.service;
 
 import desafio_codigo.api.request.AgendamentoVisitaAlterarRequest;
-import desafio_codigo.api.request.AgendamentoVisitaCancelarRequest;
+import desafio_codigo.api.request.AgendamentoVisitaAlterarStatusRequest;
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
+import desafio_codigo.config.FormatarCpf;
 import desafio_codigo.exceptions.BadRequestException;
 import desafio_codigo.modell.AgendamentoVisita;
 import desafio_codigo.modell.Custodiado;
@@ -34,6 +35,7 @@ public class AgendamentoVisitaService {
     private final VisitanteService visitanteService;
     private final StatusService statusService;
     private final DataHoraAutorizacaoRepository dataHoraAutorizacaoRepository;
+    private final FormatarCpf formatarCpf;
 
 
     public AgendamentoVisita createAgendamentoVisita(AgendamentoVisitaRequest agendamento, String visitante, String custodiado) {
@@ -44,10 +46,13 @@ public class AgendamentoVisitaService {
                         agendamento.getHoraAgendamento()),
                 custodiadoService.findCustodiadoByNomeAndProntuario(custodiado, agendamento.getNumeroProntuario()).getIdPessoa());
 
+
+
+
         return agendamentoRepository.save(
                 AgendamentoVisita.builder()
                         .custodiado(custodiadoService.findCustodiadoByNomeAndProntuario(custodiado, agendamento.getNumeroProntuario()))
-                        .visitante(visitanteService.findByNomeAndCpf(visitante, agendamento.getVisitanteCpf()))
+                        .visitante(visitanteService.findByNomeAndCpf(visitante, formatarCpf.formatarCpf(agendamento.getVisitanteCpf())))
                         .dataHoraAgendamento(conversorDataHora(agendamento.getDataAgendamento(), agendamento.getHoraAgendamento()))
                         .status(statusService.buscarStatus(1L))
                         .build()
@@ -102,7 +107,7 @@ public class AgendamentoVisitaService {
 
     }
 
-    public AgendamentoVisita cancelarAgendamentoVisita(AgendamentoVisitaCancelarRequest cancelamento, String visitante, String custodiado) {
+    public AgendamentoVisita cancelarAgendamentoVisita(AgendamentoVisitaAlterarStatusRequest cancelamento, String visitante, String custodiado) {
 
 
         var agendamentoUpdate = listAgendamentoData(cancelamento.getDataAgendamento(), cancelamento.getHoraAgendamento())
@@ -110,26 +115,40 @@ public class AgendamentoVisitaService {
                         && agendamento.getVisitante().getNome().equals(visitante)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
 
-        return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(2L));
+        return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(3L));
+
+
+    }
+
+    public AgendamentoVisita realizarAgendamentoVisita(AgendamentoVisitaAlterarStatusRequest agendamento, String visitante, String custodiado) {
+
+
+        var agendamentoUpdate = listAgendamentoData(agendamento.getDataAgendamento(), agendamento.getHoraAgendamento())
+                .stream().filter(agend -> agend.getCustodiado().getNome().equals(custodiado)
+                        && agend.getVisitante().getNome().equals(visitante)).findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
+
+        return agendamentoUpdate.realizarVisita(statusService.buscarStatus(2L));
 
 
     }
 
     public AgendamentoVisita alterarDataHoraVisita(AgendamentoVisitaAlterarRequest novoAgendamento, String cpfVisitante, String data, String hora) {
 
-        Visitante visitante = visitanteService.findByCpf(cpfVisitante);
+        Visitante visitante = visitanteService.findByCpf(formatarCpf.formatarCpf(cpfVisitante));
 
         verificacaoDataHorario(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()));
 
         AgendamentoVisita agendamento = agendamentoRepository.findByVisitanteNomeAndVisitanteCpfAndDataHoraAgendamento(
                         visitante.getNome(), visitante.getCpf(), conversorDataHora(data, hora))
-                .orElseThrow(() -> new BadRequestException("Agendamento Não encontrado"))
-                .alteraDataHoraVisita(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario())                );
+                .orElseThrow(() -> new BadRequestException("Agendamento Não encontrado"));
+
 
         Custodiado custodiado = agendamento.getCustodiado();
 
-        verificarCustodiadoHorario(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()),
-                custodiadoService.findCustodiadoByNomeAndProntuario(custodiado.getNome(), custodiado.getNumeroProntuario()).getIdPessoa());
+        verificarCustodiadoHorario(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()), custodiado.getIdPessoa());
+
+        agendamento.alteraDataHoraVisita(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()));
 
         return agendamentoRepository.save(agendamento);
 
@@ -172,6 +191,7 @@ public class AgendamentoVisitaService {
 
         return LocalDateTime.of(dataFormatada, horaFormatada);
     }
+
 
 
 }
