@@ -43,14 +43,14 @@ public class CustodiadoRequest {
     @NotNull(message = "Unidade Penal is Not Null")
     @NotEmpty(message = "Unidade Penal is Not Empty")
     @Schema(description = "Descrição Unidade Penal", example = "PDF I")
-    private String descricao;
+    private String descricaoUnidadePenal;
 
     public void setnome(String nome) {
         this.nome = nome.toUpperCase();
     }
 
     public void setDescricao(String descricao) {
-        this.descricao = descricao.toUpperCase();
+        this.descricaoUnidadePenal = descricao.toUpperCase();
     }
 
 }

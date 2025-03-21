@@ -4,11 +4,8 @@ package desafio_codigo.service;
 import desafio_codigo.api.request.CustodiadoRequest;
 import desafio_codigo.mapper.CustodiadoMapper;
 import desafio_codigo.modell.Custodiado;
-import desafio_codigo.modell.UnidadePenal;
 import desafio_codigo.repository.CustodiadoRepository;
-import desafio_codigo.repository.UnidadePenalRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,7 +28,7 @@ public class CustodiadoService {
 
         return repository.save(custodiadoToSave
                 .createCustodiado(unidadePenalService
-                        .findByDescricao(custodiado.getDescricao())));
+                        .findByDescricao(custodiado.getDescricaoUnidadePenal())));
 
     }
 
