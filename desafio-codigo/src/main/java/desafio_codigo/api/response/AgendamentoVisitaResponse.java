@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Builder
 public class AgendamentoVisitaResponse {
 
+    private Long idAgendamento;
+
     private CustodiadoResponse custodiado;
 
     private VisitanteResponse visitante;
