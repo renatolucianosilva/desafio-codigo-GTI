@@ -5,9 +5,11 @@ import desafio_codigo.api.request.AgendamentoVisitaCancelarRequest;
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
 import desafio_codigo.exceptions.BadRequestException;
 import desafio_codigo.modell.AgendamentoVisita;
+import desafio_codigo.modell.Custodiado;
 import desafio_codigo.modell.Visitante;
 import desafio_codigo.repository.AgendamentoVisitaRepository;
 
+import desafio_codigo.repository.DataHoraAutorizacaoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +33,12 @@ public class AgendamentoVisitaService {
     private final CustodiadoService custodiadoService;
     private final VisitanteService visitanteService;
     private final StatusService statusService;
+    private final DataHoraAutorizacaoRepository dataHoraAutorizacaoRepository;
 
 
     public AgendamentoVisita createAgendamentoVisita(AgendamentoVisitaRequest agendamento, String visitante, String custodiado) {
+
+        verificacaoDataHorario(conversorDataHora(agendamento.getDataAgendamento(), agendamento.getHoraAgendamento()));
 
         verificarCustodiadoHorario(conversorDataHora(agendamento.getDataAgendamento(),
                         agendamento.getHoraAgendamento()),
@@ -110,14 +115,23 @@ public class AgendamentoVisitaService {
 
     }
 
-    public AgendamentoVisita alterarDataHoraVisita(AgendamentoVisitaAlterarRequest dadosAlterar, String cpfVisitante, String data, String hora) {
+    public AgendamentoVisita alterarDataHoraVisita(AgendamentoVisitaAlterarRequest novoAgendamento, String cpfVisitante, String data, String hora) {
 
         Visitante visitante = visitanteService.findByCpf(cpfVisitante);
 
-        return agendamentoRepository.save(agendamentoRepository.findByVisitanteNomeAndVisitanteCpfAndDataHoraAgendamento(
+        verificacaoDataHorario(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()));
+
+        AgendamentoVisita agendamento = agendamentoRepository.findByVisitanteNomeAndVisitanteCpfAndDataHoraAgendamento(
                         visitante.getNome(), visitante.getCpf(), conversorDataHora(data, hora))
                 .orElseThrow(() -> new BadRequestException("Agendamento Não encontrado"))
-                .alteraDataHoraVisita(conversorDataHora(dadosAlterar.getNovaData(), dadosAlterar.getNovoHorario())));
+                .alteraDataHoraVisita(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario())                );
+
+        Custodiado custodiado = agendamento.getCustodiado();
+
+        verificarCustodiadoHorario(conversorDataHora(novoAgendamento.getNovaData(), novoAgendamento.getNovoHorario()),
+                custodiadoService.findCustodiadoByNomeAndProntuario(custodiado.getNome(), custodiado.getNumeroProntuario()).getIdPessoa());
+
+        return agendamentoRepository.save(agendamento);
 
 
     }
@@ -135,6 +149,13 @@ public class AgendamentoVisitaService {
 
         if (agendamentoFilter.isPresent())
             throw new BadRequestException("Custodiado já possui agendamento para esse horario");
+
+    }
+
+    public void verificacaoDataHorario(LocalDateTime dataHoraAgendamento) {
+
+       if (dataHoraAutorizacaoRepository.findByDataHoraAutorizado(dataHoraAgendamento).isEmpty())
+           throw new BadRequestException("Data e Hora não Liberda para Agendamento");
 
     }
 
