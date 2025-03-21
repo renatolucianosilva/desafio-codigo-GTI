@@ -180,9 +180,11 @@ git clone https://github.com/renatolucianosilva/desafio-codigo-GTI.git
 * O banco de dados está configurado para armazenar os dados na pasta dados na raiz do projeto.
 * A URL de conexão é: jdbc:h2:file:./data/databases/desafio_codigo
 * A configuração spring.jpa.hibernate.ddl-auto=update garante que o esquema do banco de dados seja atualizado automaticamente ao iniciar a aplicação, preservando os dados mesmo após reiniciar a aplicação.
-* Use spring.sql.init.mode=always para garantir que seus scripts SQL sejam executados corretamente ao iniciar a aplicação.
-* SCRIP SQL em (main/java/resourses/V1__CretateTables)
-* Não é necessário realizar nenhuma configuração adicional para o banco de dados H2.
+* Migração Flyway para População do Banco de Dados
+* A migração está localizada no diretório `src/main/resources/db/migration`.
+* A migração é executada automaticamente pelo Flyway na inicialização da aplicação.
+* A migração contém instruções SQL para inserir dados em tabelas específicas do banco de dados. Consulte o arquivo da migração para obter mais detalhes.
+
 
 ### Observações:
 
@@ -191,3 +193,69 @@ git clone https://github.com/renatolucianosilva/desafio-codigo-GTI.git
 * Após clonar o repositório e baixar as dependências, você pode executar a aplicação Spring Boot normalmente.
 * Caso tenha alguma dúvida, consulte a documentação do Spring Boot e do H2 Database.
 
+# EndPoints da Aplicação
+## Endpoints de Agendamento de Visitas (AgendamentoVisitaController)
+
+Este controlador gerencia as operações relacionadas ao agendamento de visitas.
+
+| Método HTTP | URL                                     | Descrição                                         |
+|-------------|-----------------------------------------|---------------------------------------------------|
+| POST        | `/v1/agendamentos`                      | Agendar Nova Visita                               |
+| GET         | `/v1/agendamentos`                      | Listar Agendamentos de Visita (Paginado)           |
+| GET         | `/v1/agendamentos/filterByCustodiado`    | Listar Agendamentos por Custodiado                |
+| GET         | `/v1/agendamentos/filterByVisitante`     | Listar Agendamentos por Visitante                 |
+| GET         | `/v1/agendamentos/filterByStatus`        | Listar Agendamentos por Status                    |
+| GET         | `/v1/agendamentos/filterByDateTime`      | Listar Agendamentos por Data e Hora               |
+| PUT         | `/v1/agendamentos/cancelamento`          | Cancelar Agendamento                              |
+| PUT         | `/v1/agendamentos/alterarDataHora`       | Alterar Data e Hora do Agendamento                |
+| PUT         | `/v1/agendamentos/efetivaragendamento`   | Efetivar um Agendamento                           |
+
+## Endpoints de Custodiados (CustodiadoController)
+
+Este controlador gerencia as operações relacionadas aos custodiados.
+
+| Método HTTP | URL                                     | Descrição                                          |
+|-------------|-----------------------------------------|----------------------------------------------------|
+| POST        | `/v1/custodiados`                      | Cadastrar um novo custodiado                       |
+| GET         | `/v1/custodiados`                      | Listar todos custodiados (paginado)                |
+| GET         | `/v1/custodiados/{id}`                  | Retornar custodiado por ID                         |
+| GET         | `/v1/custodiados/filterByNome`         | Retornar custodiado por nome                       |
+
+## Endpoints de Unidades Penais (UnidadePenalController)
+
+Este controlador gerencia as operações relacionadas às unidades penais.
+
+| Método HTTP | URL                                     | Descrição                                          |
+|-------------|-----------------------------------------|----------------------------------------------------|
+| POST        | `/v1/unidadespenais`                   | Cadastrar Unidade Penal                            |
+| GET         | `/v1/unidadespenais`                   | Listar todas Unidades Penais (paginado)            |
+| GET         | `/v1/unidadespenais/{id}`               | Retornar Unidade Penal por ID                      |
+| GET         | `/v1/unidadespenais/filterDescricao`   | Retornar Unidade Penal pela Descrição              |
+
+## Endpoints de Visitantes (VisitanteController)
+
+Este controlador gerencia as operações relacionadas aos visitantes.
+
+| Método HTTP | URL                   | Descrição                                 |
+|-------------|-----------------------|-------------------------------------------|
+| POST        | `/v1/visitantes`      | Cadastrar um novo visitante               |
+| GET         | `/v1/visitantes`      | Listar todos visitantes (paginado)        |
+| GET         | `/v1/visitantes/{id}` | Buscar um visitante por ID                |
+
+
+## Documentação da API (Swagger)
+
+Esta API está totalmente documentada usando o Swagger. Você pode acessar a documentação interativa para explorar os endpoints, entender os modelos de dados e testar as requisições diretamente do seu navegador.
+
+### Acesso à Documentação Swagger
+
+Para acessar a documentação Swagger, execute a aplicação e navegue até o seguinte URL:
+**http://localhost:8080/api/swagger-ui/index.html**
+
+(Substitua `8080` pela porta em que sua aplicação está rodando, se necessário.)
+
+Esta API utiliza autenticação JWT (JSON Web Tokens) para proteger os endpoints. Para acessar os endpoints protegidos, você precisa fornecer um token JWT válido no cabeçalho `Authorization` da requisição.
+
+### Geração do Token JWT (POST /auth/login)
+
+Para gerar um token JWT, você precisa fazer uma requisição `POST` para o endpoint `/auth/login`.
