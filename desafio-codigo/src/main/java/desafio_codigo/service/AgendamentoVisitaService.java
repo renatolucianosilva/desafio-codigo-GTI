@@ -1,15 +1,14 @@
 package desafio_codigo.service;
 
+import desafio_codigo.api.request.AgendamentoVisitaAlterarRequest;
 import desafio_codigo.api.request.AgendamentoVisitaCancelarRequest;
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
 import desafio_codigo.exceptions.BadRequestException;
-import desafio_codigo.mapper.AgendamentoVisitaMapper;
 import desafio_codigo.modell.AgendamentoVisita;
-import desafio_codigo.modell.Custodiado;
+import desafio_codigo.modell.Visitante;
 import desafio_codigo.repository.AgendamentoVisitaRepository;
 
 import lombok.AllArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,30 +31,37 @@ public class AgendamentoVisitaService {
     private final CustodiadoService custodiadoService;
     private final VisitanteService visitanteService;
     private final StatusService statusService;
-    private final AgendamentoVisitaMapper Mapper;
 
-    public AgendamentoVisita createAgendamentoVisita (AgendamentoVisitaRequest agendamento) {
+
+    public AgendamentoVisita createAgendamentoVisita(AgendamentoVisitaRequest agendamento, String visitante, String custodiado) {
+
+        verificarCustodiadoHorario(conversorDataHora(agendamento.getDataAgendamento(),
+                        agendamento.getHoraAgendamento()),
+                custodiadoService.findCustodiadoByNomeAndProntuario(custodiado, agendamento.getNumeroProntuario()).getIdPessoa());
 
         return agendamentoRepository.save(
-                Mapper.toAgendamentoVisita(agendamento)
-                        .novoAgendamentoVisita(verificarCustodiadoHorario(agendamento.getDataHoraAgendamento(), agendamento.getIdCustodiado()),
-                             visitanteService.findById(agendamento.getIdVisitante()),
-                             statusService.buscarStatus(1L)));
+                AgendamentoVisita.builder()
+                        .custodiado(custodiadoService.findCustodiadoByNomeAndProntuario(custodiado, agendamento.getNumeroProntuario()))
+                        .visitante(visitanteService.findByNomeAndCpf(visitante, agendamento.getVisitanteCpf()))
+                        .dataHoraAgendamento(conversorDataHora(agendamento.getDataAgendamento(), agendamento.getHoraAgendamento()))
+                        .status(statusService.buscarStatus(1L))
+                        .build()
+        );
 
     }
 
-    public Page<AgendamentoVisita> listaAgendamentoVisita (Pageable pageable) {
+    public Page<AgendamentoVisita> listaAgendamentoVisita(Pageable pageable) {
 
         return agendamentoRepository.findAll(pageable);
 
     }
 
-    public AgendamentoVisita buscarAgendamentoVisita (Long id) {
+    public AgendamentoVisita buscarAgendamentoVisitaById(Long id) {
         return agendamentoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Existe"));
     }
 
-    public List<AgendamentoVisita> listAgendamentoCustodiado (String name ) {
+    public List<AgendamentoVisita> listAgendamentoCustodiado(String name) {
 
         if (agendamentoRepository
                 .findByCustodiadoNome(name).isEmpty()) throw new BadRequestException("Custodiado Não Encontrado");
@@ -63,7 +69,7 @@ public class AgendamentoVisitaService {
         return agendamentoRepository.findByCustodiadoNome(name);
     }
 
-    public List<AgendamentoVisita> listAgendamentoVisitante (String nome ) {
+    public List<AgendamentoVisita> listAgendamentoVisitante(String nome) {
 
         if (agendamentoRepository
                 .findByVisitanteNome(nome).isEmpty()) throw new BadRequestException("Visitante Não Encontrado");
@@ -71,46 +77,68 @@ public class AgendamentoVisitaService {
         return agendamentoRepository.findByVisitanteNome(nome);
     }
 
-    public List<AgendamentoVisita> listAgendamentoStatus (String status ) {
+    public List<AgendamentoVisita> listAgendamentoStatus(String status) {
 
         if (agendamentoRepository
-                .findByStatusDescricao(status).isEmpty()) throw new BadRequestException("Não há agendamento com status " + status);
+                .findByStatusDescricao(status).isEmpty())
+            throw new BadRequestException("Não há agendamento com status " + status);
 
         return agendamentoRepository.findByStatusDescricao(status);
     }
 
-    public List<AgendamentoVisita> listAgendamentoData (String data, String hora ) {
+    public List<AgendamentoVisita> listAgendamentoData(String data, String hora) {
 
-            var agendamento = agendamentoRepository.findByDataHoraAgendamento(conversorDataHora(data, hora));
+        var agendamento = agendamentoRepository.findByDataHoraAgendamento(conversorDataHora(data, hora));
 
-            if (agendamento.isEmpty()) throw new BadRequestException("Agendamento nao encontrado para data " + data + " e hora " + hora);
+        if (agendamento.isEmpty())
+            throw new BadRequestException("Agendamento nao encontrado para data " + data + " e hora " + hora);
 
         return agendamento;
 
     }
 
-    public AgendamentoVisita cancelarVisita (AgendamentoVisitaCancelarRequest cancelamento) {
+    public AgendamentoVisita cancelarAgendamentoVisita(AgendamentoVisitaCancelarRequest cancelamento, String visitante, String custodiado) {
 
-        return agendamentoRepository.save(buscarAgendamentoVisita(cancelamento.getIdAgendamento())
-                .cancelarVisita(statusService.buscarStatus(2L)));
+
+        var agendamentoUpdate = listAgendamentoData(cancelamento.getDataAgendamento(), cancelamento.getHoraAgendamento())
+                .stream().filter(agendamento -> agendamento.getCustodiado().getNome().equals(custodiado)
+                        && agendamento.getVisitante().getNome().equals(visitante)).findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
+
+        return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(2L));
+
+
     }
 
-    public Custodiado verificarCustodiadoHorario (LocalDateTime dataHoraAgendamento, Long idCustodiado) {
+    public AgendamentoVisita alterarDataHoraVisita(AgendamentoVisitaAlterarRequest dadosAlterar, String cpfVisitante, String data, String hora) {
+
+        Visitante visitante = visitanteService.findByCpf(cpfVisitante);
+
+        return agendamentoRepository.save(agendamentoRepository.findByVisitanteNomeAndVisitanteCpfAndDataHoraAgendamento(
+                        visitante.getNome(), visitante.getCpf(), conversorDataHora(data, hora))
+                .orElseThrow(() -> new BadRequestException("Agendamento Não encontrado"))
+                .alteraDataHoraVisita(conversorDataHora(dadosAlterar.getNovaData(), dadosAlterar.getNovoHorario())));
+
+
+    }
+
+    public void verificarCustodiadoHorario(LocalDateTime dataHoraAgendamento, Long idCustodiado) {
 
         var custodiado = custodiadoService.findCustodiadoById(idCustodiado);
 
         var agendamentosVisita = agendamentoRepository.findByCustodiadoNome(custodiado.getNome());
 
-       var agendamentoFilter = agendamentosVisita.stream()
-                .filter( agendamento -> agendamento.getDataHoraAgendamento()
-                        .equals(dataHoraAgendamento)).findAny();
+        var agendamentoFilter = agendamentosVisita.stream()
+                .filter(agendamento -> agendamento.getDataHoraAgendamento()
+                        .equals(dataHoraAgendamento) && agendamento.getStatus().getIdStatus().equals(1L)
+                ).findAny();
 
-        if(!agendamentoFilter.isEmpty()) throw new BadRequestException("Custodiado já possui agendamento para esse horario");
+        if (agendamentoFilter.isPresent())
+            throw new BadRequestException("Custodiado já possui agendamento para esse horario");
 
-        return custodiado;
     }
 
-    public LocalDateTime conversorDataHora(String data, String hora){
+    public LocalDateTime conversorDataHora(String data, String hora) {
 
         DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -120,11 +148,8 @@ public class AgendamentoVisitaService {
 
         LocalTime horaFormatada = LocalTime.parse(hora, formatTime);
 
-        LocalDateTime dateTime = LocalDateTime.of(dataFormatada, horaFormatada);
-        System.out.println(dateTime);
 
-
-        return dateTime;
+        return LocalDateTime.of(dataFormatada, horaFormatada);
     }
 
 
