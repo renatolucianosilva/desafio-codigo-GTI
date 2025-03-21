@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -30,17 +31,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                )
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui/**",
-                                        "/swagger-ui.html/**",
-                                        "/swagger-resources/**",
-                                        "/webjars/**",
-                                        "/api-docs/**",
-                                        "/api/auth/login"
-                                ).permitAll()
-                                .requestMatchers("/auth/login", "/api/auth/login").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api-docs/**",
+                                "/api/auth/login"
+                        ).permitAll()
+                        .requestMatchers("/auth/login", "/api/auth/login").permitAll()
                         .anyRequest().authenticated()
                 ).oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
@@ -49,8 +53,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -72,25 +74,16 @@ public class SecurityConfig {
 
         jwtConverter.setJwtGrantedAuthoritiesConverter((Jwt jwt) -> {
             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
-
             Object scopes = jwt.getClaims().get("scope");
             if (scopes instanceof String scopesString) {
                 Set<GrantedAuthority> scopeAuthorities = Arrays.stream(scopesString.split(" "))
                         .map(scope -> new SimpleGrantedAuthority("SCOPE_" + scope))
                         .collect(Collectors.toSet());
-
                 grantedAuthorities.addAll(scopeAuthorities);
-
             }
-
             return grantedAuthorities;
         });
 
         return jwtConverter;
     }
-
-
-
-
 }
