@@ -1,10 +1,9 @@
 package desafio_codigo.controller;
 
+import desafio_codigo.api.request.AgendamentoVisitaAlterarRequest;
 import desafio_codigo.api.request.AgendamentoVisitaCancelarRequest;
 import desafio_codigo.api.request.AgendamentoVisitaRequest;
 import desafio_codigo.api.response.AgendamentoVisitaResponse;
-import desafio_codigo.api.response.UnidadePenalResponse;
-import desafio_codigo.api.response.VisitanteResponse;
 import desafio_codigo.mapper.AgendamentoVisitaMapper;
 import desafio_codigo.service.AgendamentoVisitaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,15 +13,17 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -66,7 +67,7 @@ public class AgendamentoVisitaController {
                     schema = @Schema(type = "string", defaultValue = "idAgendamento"),
                     examples = @ExampleObject(name = "Ordenação por Id", value = "idAgendamento"))
             String sort) {
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sort));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(agendamentoService.listaAgendamentoVisita(pageable)
@@ -117,7 +118,7 @@ public class AgendamentoVisitaController {
                 .body(Mapper.toAgedamentoVisitaResponseList(agendamentoService.listAgendamentoData(date, time)));
     }
 
-    @PutMapping("cancelamento")
+    @PutMapping("/cancelamento")
     @Operation(summary = "Cancela um agendamento")
     @ApiResponse(responseCode = "200", description = "Agendamento cancelado com sucesso",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
@@ -133,6 +134,30 @@ public class AgendamentoVisitaController {
                         .toAgendamentoVisitaResponse
                                 (agendamentoService.cancelarAgendamentoVisita
                                         (cancelamento, nomeVisitante, nomeCustodiado)));
+
+    }
+
+    @PutMapping("/alterarDataHora")
+    @Operation(summary = "Alterar data de um agendamento")
+    @ApiResponse(responseCode = "200", description = "Agendamento alterado",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AgendamentoVisitaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Requisição inválida")
+    @ApiResponse(responseCode = "404", description = "Agendamento não encontrado")
+    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    public ResponseEntity<AgendamentoVisitaResponse> alterarDataVisita(
+            @RequestBody @Valid AgendamentoVisitaAlterarRequest dadosAlteracao,
+            @Schema(name = "CPF Visitante", example = "XXX.XXX.XXX-XX")
+            @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", message = "CPF deve estar no formato XXX.XXX.XXX-XX ou XXXXXXXXXXX" )
+            @Length(min = 11, max = 14, message = "CPF deve ter entre 11 e 14 caracteres")
+            @RequestParam String cpfVisitante,
+                                                                    @RequestParam String data,
+                                                                       @RequestParam String hora) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Mapper
+                        .toAgendamentoVisitaResponse
+                                (agendamentoService.alterarDataHoraVisita
+                                        (dadosAlteracao, cpfVisitante, data, hora)));
 
     }
 
