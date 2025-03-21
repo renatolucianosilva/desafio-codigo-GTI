@@ -115,7 +115,7 @@ public class AgendamentoVisitaService {
                         && agendamento.getVisitante().getNome().equals(visitante)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
 
-        return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(3L));
+        return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(2L));
 
 
     }
@@ -128,7 +128,7 @@ public class AgendamentoVisitaService {
                         && agend.getVisitante().getNome().equals(visitante)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
 
-        return agendamentoUpdate.realizarVisita(statusService.buscarStatus(2L));
+        return agendamentoUpdate.realizarVisita(statusService.buscarStatus(3L));
 
 
     }
