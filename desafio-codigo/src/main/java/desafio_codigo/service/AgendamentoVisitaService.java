@@ -111,8 +111,8 @@ public class AgendamentoVisitaService {
 
 
         var agendamentoUpdate = listAgendamentoData(cancelamento.getDataAgendamento(), cancelamento.getHoraAgendamento())
-                .stream().filter(agendamento -> agendamento.getCustodiado().getNome().equals(custodiado)
-                        && agendamento.getVisitante().getNome().equals(visitante)).findFirst()
+                .stream().filter(agendamento -> agendamento.getCustodiado().getNome().equalsIgnoreCase(custodiado)
+                        && agendamento.getVisitante().getNome().equalsIgnoreCase(visitante)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
 
         return agendamentoUpdate.cancelarVisita(statusService.buscarStatus(2L));
@@ -124,8 +124,8 @@ public class AgendamentoVisitaService {
 
 
         var agendamentoUpdate = listAgendamentoData(agendamento.getDataAgendamento(), agendamento.getHoraAgendamento())
-                .stream().filter(agend -> agend.getCustodiado().getNome().equals(custodiado)
-                        && agend.getVisitante().getNome().equals(visitante)).findFirst()
+                .stream().filter(agend -> agend.getCustodiado().getNome().equalsIgnoreCase(custodiado)
+                        && agend.getVisitante().getNome().equalsIgnoreCase(visitante)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento Não Encontrado"));
 
         return agendamentoUpdate.realizarVisita(statusService.buscarStatus(3L));
