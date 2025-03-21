@@ -30,7 +30,7 @@ public class UnidadePenalService {
 
 
     public UnidadePenal findUnidadePenalById(Long id) {
-        System.out.println("Serviceunidade penal: " + id);
+
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unidade Penal Não Existe"));
     }
