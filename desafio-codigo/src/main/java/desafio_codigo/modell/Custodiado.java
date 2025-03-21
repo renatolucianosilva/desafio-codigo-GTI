@@ -1,6 +1,8 @@
 package desafio_codigo.modell;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
 public class Custodiado extends Pessoa{
 
     @Column(name = "numero_protuario")
+    @Pattern(regexp = "^\\d+$", message = "Somente Numeros.")
+    @Schema(description = "Numero de Prontuário", example = "123456")
     private String numeroProntuario;
 
     @Column(name = "vulgo")

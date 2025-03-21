@@ -31,7 +31,7 @@ public class CustodiadoService {
 
         return repository.save(custodiadoToSave
                 .createCustodiado(unidadePenalService
-                        .findUnidadePenalById(custodiado.getIdUnidadePenal())));
+                        .findByDescricao(custodiado.getDescricao())));
 
     }
 
@@ -41,9 +41,22 @@ public class CustodiadoService {
 
     }
 
-public Custodiado findCustodiadoById(Long id) {
+    public Custodiado findCustodiadoById(Long id) {
 
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Custodiado Não Encontrado"));
-}
+    }
+
+    public List<Custodiado> findCustodiadoByNome(String nome) {
+
+        return repository.findByNome(nome)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Custodiado Não Encontrado"));
+    }
+
+    public Custodiado findCustodiadoByNomeAndProntuario(String nome, String prontuario) {
+
+        return repository.findCustodiadoByNomeAndNumeroProntuario(nome, prontuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Custodiado Não Encontrado"));
+    }
+
 }
