@@ -12,10 +12,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/agendamentos")
 @AllArgsConstructor
+@Tag(name = "Agendamentos")
 public class AgendamentoVisitaController {
 
     private final AgendamentoVisitaService agendamentoService;
@@ -158,11 +161,11 @@ public class AgendamentoVisitaController {
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     public ResponseEntity<AgendamentoVisitaResponse> alterarDataVisita(
             @RequestBody @Valid AgendamentoVisitaAlterarRequest dadosAlteracao,
-            @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", message = "CPF deve estar no formato XXX.XXX.XXX-XX ou XXXXXXXXXXX" )
+            @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}$", message = "CPF deve estar no formato XXX.XXX.XXX-XX ou XXXXXXXXXXX")
             @Length(min = 11, max = 14, message = "CPF deve ter entre 11 e 14 caracteres")
             @RequestParam String cpfVisitante,
-                                                                    @RequestParam String data,
-                                                                       @RequestParam String hora) {
+            @RequestParam String data,
+            @RequestParam String hora) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Mapper
