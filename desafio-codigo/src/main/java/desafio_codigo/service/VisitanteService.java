@@ -35,6 +35,26 @@ public class VisitanteService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Visitante Não Existe"));
     }
 
+    public Visitante findByNome(String nome) {
+        return visitanteRepository.findByNome(nome)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Visitante Não Existe"));
+    }
+
+    public Visitante findByNomeAndCpf(String nome, String cpf) {
+
+        return visitanteRepository.findByNomeAndCpf(nome, cpf)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Visitante Não Existe"));
+
+    }
+
+    public Visitante findByCpf(String cpf) {
+
+        return visitanteRepository.findByCpf( cpf)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Visitante Não Existe"));
+
+    }
+
+
 
 
 }
